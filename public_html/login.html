@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="loginStyle.css">
+     <link rel="shortcut icon" href="#">
+    
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        
+</head>
+<body>
+    <div class="container">
+        <div class="background"></div>
+        <div class="form-container">
+            <h1>Login</h1>
+            <form id="LoginForm">
+                <label>User ID</label>
+                <input type="text" id="userid" name="userid" required>
+                
+                <label>Email</label>
+                <input type="text" id="email" name="email" required>
+                
+                <label>Password</label>
+                <input type="password" id="password" name="password" required>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label>By continuing, I agree to rCUBE's Mate's Terms of Service & Privacy Policy</label>
+                </div>
+                
+                <input type="submit" name="login" value="Login" style="height: 30px;background-color:#2D5939;color:white"/>
+                
+            </form>
+        </div>
+    </div>
+    
+     <script type="module">
+                    // Import the functions you need from the SDKs you need
+                    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+                    import { getDatabase, get, ref, child} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+                    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+
+
+                    // Your web app's Firebase configuration
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyAgk4DfEP563KxV2ogIporjS4gvCkBsxEk",
+                        authDomain: "authentication-8c2f6.firebaseapp.com",
+                        databaseURL: "https://authentication-8c2f6-default-rtdb.firebaseio.com",
+                        projectId: "authentication-8c2f6",
+                        storageBucket: "authentication-8c2f6.appspot.com",
+                        messagingSenderId: "1051483236770",
+                        appId: "1:1051483236770:web:6247218db0ab2ecff4aafb"
+                    };
+
+                    // Initialize Firebase
+                    const app = initializeApp(firebaseConfig);
+                    const database = getDatabase();
+                    const auth = getAuth(app);
+                    const dbref = ref(database);
+
+                    let Email = document.getElementById("email");
+                    let UserId = document.getElementById("userid");
+                    let Password = document.getElementById("password");
+                    let LoginForm = document.getElementById("LoginForm");
+                    
+
+                    let SignInUser = evt => {
+                        evt.preventDefault();
+
+                        signInWithEmailAndPassword(auth, Email.value, Password.value)
+                                .then((credentials) => {
+
+                                    get(child(dbref,'UsersAuthList/' + credentials.user.uid)).then((snapshot)=>{
+                                        if(snapshot.exists){
+                                            sessionStorage.setItem("user-info",JSON.stringify({
+                                               UserID: snapshot.val()
+                                               
+                                               
+                                            }))
+                                            sessionStorage.setItem("user-creds", JSON.stringify(credentials.user));
+                                            window.location.href = 'home.html';
+                                        }
+                                    })
+
+                                })
+                                .catch((error) => {
+                                    alert(error.message);
+                                    console.log(error.code);
+                                    console.log(error.message);
+                                })
+                    }
+                    
+               LoginForm.addEventListener('submit',SignInUser);
+
+
+                </script>
+   
+</body>
+</html>
+
